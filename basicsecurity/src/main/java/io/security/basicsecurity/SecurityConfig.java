@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,8 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .anyRequest()
-            .authenticated();
+                .anyRequest()
+                .authenticated();
 
         http.formLogin();
 //            //.loginPage("/loginPage")
@@ -59,32 +60,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            })
 //            .permitAll(); // loginPage 경로로 접근하는 모든 사용자들은 인증 받지않아도 접근가능하게 함
         http.logout()
-            .logoutUrl("/logout")
-            .logoutSuccessUrl("/loginPage")
-            .addLogoutHandler(new LogoutHandler() {
-                @Override
-                public void logout(HttpServletRequest request, HttpServletResponse response,
-                    Authentication authentication) {
-                    HttpSession session = request.getSession();
-                    session.invalidate();
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/loginPage")
+                .addLogoutHandler(new LogoutHandler() {
+                    @Override
+                    public void logout(HttpServletRequest request, HttpServletResponse response,
+                                       Authentication authentication) {
+                        HttpSession session = request.getSession();
+                        session.invalidate();
 
-                }
-            })
-            .logoutSuccessHandler(new LogoutSuccessHandler() {
-                @Override
-                public void onLogoutSuccess(HttpServletRequest request,
-                    HttpServletResponse response, Authentication authentication)
-                    throws IOException, ServletException {
-                    response.sendRedirect("/login");
-                }
-            })
-            .deleteCookies("remember-me")
+                    }
+                })
+                .logoutSuccessHandler(new LogoutSuccessHandler() {
+                    @Override
+                    public void onLogoutSuccess(HttpServletRequest request,
+                                                HttpServletResponse response, Authentication authentication)
+                            throws IOException, ServletException {
+                        response.sendRedirect("/login");
+                    }
+                })
+                .deleteCookies("remember-me");
 
-            .and()
+        http.rememberMe()
+                .rememberMeParameter("remember")
+                .tokenValiditySeconds(3600)
+                .userDetailsService(userDetailsService);
 
-            .rememberMe()
-            .rememberMeParameter("remember")
-            .tokenValiditySeconds(3600)
-            .userDetailsService(userDetailsService);
+        http.sessionManagement()
+                .sessionFixation()
+                .changeSessionId()
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false);
+
     }
 }
