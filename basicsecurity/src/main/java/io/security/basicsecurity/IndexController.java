@@ -57,8 +57,11 @@ public class IndexController {
         return "index";
     }
 
+    // OAuth로그인을 해도 PrincipalDetails
+    // 일반 로그인을 해도 PrincipalData
     @GetMapping("/user")
-    public ResponseEntity<String> user() {
+    public ResponseEntity<String> user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        System.out.println("principalDetails = " + principalDetails.getUser());
         return ResponseEntity.ok("user");
     }
 
