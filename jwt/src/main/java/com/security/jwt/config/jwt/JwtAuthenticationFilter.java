@@ -1,10 +1,14 @@
 package com.security.jwt.config.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.security.jwt.config.auth.PrincipalDetails;
+import com.security.jwt.vo.User;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,7 +29,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 1. username,password 받아서
         try {
-            System.out.println(request.getInputStream().toString());
+//            BufferedReader br = request.getReader();
+//
+//            String input = null;
+//            while ((input = br.readLine()) != null) {
+//                System.out.println(input);
+//            }
+//            System.out.println(request.getInputStream().toString());
+
+            ObjectMapper om = new ObjectMapper();
+            User user = om.readValue(request.getInputStream(), User.class);
+            System.out.println(user);
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+            // PrincipalDetailsService의 loadUserByUsername() 함수가 실행됨.
+            Authentication authentication =
+                authenticationManager.authenticate(authenticationToken);
+
+            // authentication 객체가 session영역에 저장됨. => 로그인이 되었다는 뜻.
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            System.out.println(
+                "principalDetails.getUser().getUsername() = " + principalDetails.getUser()
+                    .getUsername());
+            return authentication;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,6 +63,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 3. PrincipalDetails를 세션에 담고 (권한 관리를 위해서)
 
         // 4. JWT토큰을 만들어서 응답해주면 됨.
-        return super.attemptAuthentication(request, response);
+        return null;
     }
 }
