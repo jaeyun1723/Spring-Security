@@ -1,4 +1,4 @@
-package com.ssafy.fiveguys.game.common.service;
+package com.ssafy.fiveguys.game.player.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

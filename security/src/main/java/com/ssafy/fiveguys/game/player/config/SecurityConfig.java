@@ -1,13 +1,13 @@
-package com.ssafy.fiveguys.game.common.config;
+package com.ssafy.fiveguys.game.player.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.fiveguys.game.common.filter.CustomUsernamePasswordAuthenticationFilter;
-import com.ssafy.fiveguys.game.common.filter.JwtAuthenticationProcessingFilter;
-import com.ssafy.fiveguys.game.common.handler.OAuth2LoginFailureHandler;
-import com.ssafy.fiveguys.game.common.handler.OAuth2LoginSuccessHandler;
-import com.ssafy.fiveguys.game.common.service.CustomOAuth2UserService;
-import com.ssafy.fiveguys.game.common.service.GameUserDetailsService;
-import com.ssafy.fiveguys.game.common.service.JwtService;
+import com.ssafy.fiveguys.game.player.filter.CustomUsernamePasswordAuthenticationFilter;
+import com.ssafy.fiveguys.game.player.filter.JwtAuthenticationProcessingFilter;
+import com.ssafy.fiveguys.game.player.handler.OAuth2LoginFailureHandler;
+import com.ssafy.fiveguys.game.player.handler.OAuth2LoginSuccessHandler;
+import com.ssafy.fiveguys.game.player.service.CustomOAuth2UserService;
+import com.ssafy.fiveguys.game.player.service.GameUserDetailsService;
+import com.ssafy.fiveguys.game.player.service.JwtService;
 import com.ssafy.fiveguys.game.player.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

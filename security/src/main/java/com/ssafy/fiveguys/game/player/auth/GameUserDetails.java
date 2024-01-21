@@ -1,4 +1,4 @@
-package com.ssafy.fiveguys.game.common.auth;
+package com.ssafy.fiveguys.game.player.auth;
 
 //PrincipalDetails
 public class GameUserDetails {

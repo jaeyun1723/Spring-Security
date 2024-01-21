@@ -1,7 +1,7 @@
-package com.ssafy.fiveguys.game.common.filter;
+package com.ssafy.fiveguys.game.player.filter;
 
 import com.ssafy.fiveguys.game.player.repository.PlayerRepository;
-import com.ssafy.fiveguys.game.common.service.JwtService;
+import com.ssafy.fiveguys.game.player.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

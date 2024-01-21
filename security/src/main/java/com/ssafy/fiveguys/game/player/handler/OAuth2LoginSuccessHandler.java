@@ -1,4 +1,4 @@
-package com.ssafy.fiveguys.game.common.handler;
+package com.ssafy.fiveguys.game.player.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

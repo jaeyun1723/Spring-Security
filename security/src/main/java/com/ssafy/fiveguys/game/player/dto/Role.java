@@ -1,4 +1,4 @@
-package com.ssafy.fiveguys.game.common.dto;
+package com.ssafy.fiveguys.game.player.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

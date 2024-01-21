@@ -1,4 +1,4 @@
-package com.ssafy.fiveguys.game.common.config;
+package com.ssafy.fiveguys.game.player.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

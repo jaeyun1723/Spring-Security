@@ -1,4 +1,4 @@
-package com.ssafy.fiveguys.game.common.filter;
+package com.ssafy.fiveguys.game.player.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
