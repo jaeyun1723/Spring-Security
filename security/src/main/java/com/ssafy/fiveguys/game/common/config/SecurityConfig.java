@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
+        // Oauth 로그인 설정
         http
                 .oauth2Login(oauth2Login->oauth2Login
                         .successHandler(oAuth2LoginSuccessHandler)
