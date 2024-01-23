@@ -28,7 +28,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody UserSignDto userSignDto) throws Exception {
+    public ResponseEntity<?> signUp(@RequestBody UserSignDto userSignDto)  {
         userService.signUp(userSignDto);
         return ResponseEntity.status(HttpStatus.OK).body("Signup Success");
     }

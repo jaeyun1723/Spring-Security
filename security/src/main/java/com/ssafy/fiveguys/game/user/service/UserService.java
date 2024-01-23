@@ -19,7 +19,7 @@ public class UserService {
     private final UserRepositoy userRepositoy;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public void signUp(UserSignDto userSignDto) throws Exception {
+    public void signUp(UserSignDto userSignDto) {
         User user = User.builder()
             .userId(userSignDto.getUserId())
             .username(userSignDto.getUsername())

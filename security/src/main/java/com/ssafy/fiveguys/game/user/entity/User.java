@@ -20,7 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class User {
 
     @Id
-    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private String userSequence;
+
+    @Column(name="user_id")
     private String userId;
 
     @Column(name = "password", nullable = false)
