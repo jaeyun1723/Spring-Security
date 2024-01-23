@@ -38,40 +38,45 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserRepositoy userRepositoy;
     private final JwtService jwtService;
-
+    private static final String[] swaggerURL = {
+        "/api/**", "/graphiql", "/graphql",
+        "/swagger-ui/**", "/api-docs", "/swagger-ui.html",
+        "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
+    };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-        // 기본 세팅
+//
+//        // 기본 세팅
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
-
-        // JWT 토큰 인증 설정
-        http
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterAfter(customUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
-                .addFilterBefore(jwtAuthenticationProcessingFilter(), CustomUsernamePasswordAuthenticationFilter.class);
-
-        // URL별 권한 설정
+//
+//        // JWT 토큰 인증 설정
+//        http
+//                .formLogin(AbstractHttpConfigurer::disable)
+//                .httpBasic(AbstractHttpConfigurer::disable)
+//                .sessionManagement(sessionManagement ->
+//                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilterAfter(customUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
+//                .addFilterBefore(jwtAuthenticationProcessingFilter(), CustomUsernamePasswordAuthenticationFilter.class);
+//
+//        // URL별 권한 설정
         http
                 .authorizeHttpRequests(authorize->authorize
-                        .requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico").permitAll()
-                        .requestMatchers("/sign-up").permitAll()
+                        .requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/error").permitAll()
+                        .requestMatchers("/users/signup", "/login").permitAll()
+                        .requestMatchers(swaggerURL).permitAll()
                         .anyRequest().authenticated()
                 );
-
-        // Oauth 로그인 설정
-        http
-                .oauth2Login(oauth2Login->oauth2Login
-                        .successHandler(oAuth2LoginSuccessHandler)
-                        .failureHandler(oAuth2LoginFailureHandler)
-                        .userInfoEndpoint(userInfoEndpoint->
-                                userInfoEndpoint.userService(customOAuth2UserService)));
-
+//
+//        // Oauth 로그인 설정
+//        http
+//                .oauth2Login(oauth2Login->oauth2Login
+//                        .successHandler(oAuth2LoginSuccessHandler)
+//                        .failureHandler(oAuth2LoginFailureHandler)
+//                        .userInfoEndpoint(userInfoEndpoint->
+//                                userInfoEndpoint.userService(customOAuth2UserService)));
+//
         return http.build();
     }
 
@@ -87,24 +92,24 @@ public class SecurityConfig {
      * UserDetailsService는 커스텀 LoginService로 등록
      * 또한, FormLogin과 동일하게 AuthenticationManager로는 구현체인 ProviderManager 사용(return ProviderManager)
      */
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(gameUserDetailsService);
-        return new ProviderManager(provider);
-    }
-
-    @Bean
-    public CustomUsernamePasswordAuthenticationFilter customUsernamePasswordAuthenticationFilter() {
-        CustomUsernamePasswordAuthenticationFilter customLoginFilter =
-                new CustomUsernamePasswordAuthenticationFilter(objectMapper);
-        customLoginFilter.setAuthenticationManager(authenticationManager());
-        return customLoginFilter;
-    }
-
-    @Bean
-    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        return new JwtAuthenticationProcessingFilter(jwtService, userRepositoy);
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager() {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setPasswordEncoder(passwordEncoder());
+//        provider.setUserDetailsService(gameUserDetailsService);
+//        return new ProviderManager(provider);
+//    }
+//
+//    @Bean
+//    public CustomUsernamePasswordAuthenticationFilter customUsernamePasswordAuthenticationFilter() {
+//        CustomUsernamePasswordAuthenticationFilter customLoginFilter =
+//                new CustomUsernamePasswordAuthenticationFilter(objectMapper);
+//        customLoginFilter.setAuthenticationManager(authenticationManager());
+//        return customLoginFilter;
+//    }
+//
+//    @Bean
+//    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+//        return new JwtAuthenticationProcessingFilter(jwtService, userRepositoy);
+//    }
 }
