@@ -1,20 +1,16 @@
 package com.ssafy.fiveguys.game.user.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.fiveguys.game.user.filter.CustomUsernamePasswordAuthenticationFilter;
-import com.ssafy.fiveguys.game.user.filter.JwtAuthenticationProcessingFilter;
+import com.ssafy.fiveguys.game.user.auth.JwtTokenProvider;
+import com.ssafy.fiveguys.game.user.filter.JwtAuthenticationFilter;
 import com.ssafy.fiveguys.game.user.handler.OAuth2LoginFailureHandler;
 import com.ssafy.fiveguys.game.user.handler.OAuth2LoginSuccessHandler;
 import com.ssafy.fiveguys.game.user.repository.UserRepositoy;
 import com.ssafy.fiveguys.game.user.service.CustomOAuth2UserService;
 import com.ssafy.fiveguys.game.user.service.GameUserDetailsService;
-import com.ssafy.fiveguys.game.user.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,6 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
@@ -37,7 +34,7 @@ public class SecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserRepositoy userRepositoy;
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
     private static final String[] swaggerURL = {
         "/api/**", "/graphiql", "/graphql",
         "/swagger-ui/**", "/api-docs", "/swagger-ui.html",
@@ -45,22 +42,21 @@ public class SecurityConfig {
     };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        // 기본 세팅
+
+        // 기본 세팅
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
-//
-//        // JWT 토큰 인증 설정
-//        http
-//                .formLogin(AbstractHttpConfigurer::disable)
-//                .httpBasic(AbstractHttpConfigurer::disable)
-//                .sessionManagement(sessionManagement ->
-//                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilterAfter(customUsernamePasswordAuthenticationFilter(), LogoutFilter.class)
-//                .addFilterBefore(jwtAuthenticationProcessingFilter(), CustomUsernamePasswordAuthenticationFilter.class);
-//
-//        // URL별 권한 설정
+
+        // JWT 토큰 인증 설정
+        http
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        // URL별 권한 설정
         http
                 .authorizeHttpRequests(authorize->authorize
                         .requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/error").permitAll()
@@ -100,16 +96,8 @@ public class SecurityConfig {
 //        return new ProviderManager(provider);
 //    }
 //
-//    @Bean
-//    public CustomUsernamePasswordAuthenticationFilter customUsernamePasswordAuthenticationFilter() {
-//        CustomUsernamePasswordAuthenticationFilter customLoginFilter =
-//                new CustomUsernamePasswordAuthenticationFilter(objectMapper);
-//        customLoginFilter.setAuthenticationManager(authenticationManager());
-//        return customLoginFilter;
-//    }
-//
-//    @Bean
-//    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-//        return new JwtAuthenticationProcessingFilter(jwtService, userRepositoy);
-//    }
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtTokenProvider);
+    }
 }

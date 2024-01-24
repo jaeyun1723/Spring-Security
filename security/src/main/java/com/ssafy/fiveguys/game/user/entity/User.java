@@ -3,13 +3,15 @@ package com.ssafy.fiveguys.game.user.entity;
 import com.ssafy.fiveguys.game.user.dto.Role;
 import com.ssafy.fiveguys.game.user.dto.SocialType;
 import jakarta.persistence.*;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @NoArgsConstructor
@@ -21,17 +23,20 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private String userSequence;
+    @Column(name = "user_sequence")
+    private Long userSequence;
 
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private String userId;
 
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column
+    private String email;
+
     @Column(nullable = false)
-    private String username;
+    private String name;
 
     @Column(nullable = false)
     private String nickname;
@@ -43,8 +48,7 @@ public class User {
     private Role role;
 
     @Column(name = "profile_number")
-    @ColumnDefault("1")
-    private int profileNumber;
+    private String profileNumber;
 
     @ColumnDefault("1")
     private Long level;
@@ -59,8 +63,14 @@ public class User {
     @Column(name = "social_id")
     private String socialId;
 
+    @CreationTimestamp
+    private Timestamp creationDate;
+
+    @LastModifiedDate
+    private Timestamp lastModifiedDate;
+
     public void authorizeUser() {
-        this.role = Role.ROLE_USER;
+        this.role = Role.USER;
     }
 
     public void passwordEncode(BCryptPasswordEncoder passwordEncoder) {
